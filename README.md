@@ -1,3 +1,5 @@
+![ATOM](ATOM.png "Title")
+
 # ATOM Development
 
 Here’s a guideline for how the development of the Autonomous Transportation On-board Modules (ATOM). Elaborating how the implementation shall take place, how the information shall flow, how the system shall behave in terms of the static and dynamic architecture. Moreover, the design constraints related to the problems/sub-problems on each of the development levels or phases.
