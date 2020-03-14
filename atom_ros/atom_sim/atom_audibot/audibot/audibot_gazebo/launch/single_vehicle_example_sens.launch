@@ -13,6 +13,6 @@
 
   <include file="$(find gazebo_ros)/launch/empty_world.launch" />
 
-  <node pkg="rviz" type="rviz" name="single_vehicle_viz" args="-d $(find audibot_gazebo)/rviz/single_vehicle_example.rviz" />
+  <node pkg="rviz" type="rviz" name="single_vehicle_viz" args="-d $(find audibot_gazebo)/rviz/single_vehicle_example_sens.rviz" />
 
 </launch>

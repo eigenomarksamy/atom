@@ -205,7 +205,7 @@
         </noise>
       </ray>
       <plugin name="gazebo_ros_head_hokuyo_controller" filename="libgazebo_ros_laser.so">
-        <topicName>/audi_laser_scan</topicName>
+        <topicName>/$(arg robot_name)_audi_laser_scan</topicName>
         <frameName>lasor_link</frameName>
       </plugin>
     </sensor>
