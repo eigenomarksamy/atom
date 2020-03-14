@@ -1,0 +1,3 @@
+[submodule "atom_ros/atom_sim/atom_audibot/audibot"]
+	path = atom_ros/atom_sim/atom_audibot/audibot
+	url = https://github.com/eigenomarksamy/audibot
