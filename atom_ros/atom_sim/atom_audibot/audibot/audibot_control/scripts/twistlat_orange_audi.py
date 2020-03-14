@@ -12,7 +12,7 @@ steer_pub = rospy.Publisher(steer_topic, Float64, queue_size=10)
 
 def twist_callback(twist_msg):
 	raw_ang = twist_msg.angular.z
-	steer_cmd = raw_ang		#TODO: 1) Convert angular rate to steering wheel angle & 2) Limit the angle
+	steer_cmd = raw_ang * 17.3		#TODO: 1) Convert angular rate to steering wheel angle & 2) Limit the angle
 	steer_pub.publish(Float64(steer_cmd))
 
 
