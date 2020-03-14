@@ -135,7 +135,7 @@ Visualization Manager:
       Size (Pixels): 3
       Size (m): 0.00999999978
       Style: Spheres
-      Topic: /_audi_laser_scan
+      Topic: /audi_laser_scan
       Unreliable: false
       Use Fixed Frame: true
       Use rainbow: true

@@ -8,6 +8,7 @@ Panels:
         - /Status1
         - /BlueVehicle1
         - /OrangeVehicle1
+        - /OrangeLaserScan1
       Splitter Ratio: 0.5
     Tree Height: 415
   - Class: rviz/Selection
@@ -193,7 +194,7 @@ Visualization Manager:
       Size (Pixels): 3
       Size (m): 0.00999999978
       Style: Points
-      Topic: /blue_audi_laser_scan
+      Topic: /blue/audi_laser_scan
       Unreliable: false
       Use Fixed Frame: true
       Use rainbow: true
@@ -223,7 +224,7 @@ Visualization Manager:
       Size (Pixels): 3
       Size (m): 0.00999999978
       Style: Flat Squares
-      Topic: /orange_audi_laser_scan
+      Topic: /orange/audi_laser_scan
       Unreliable: false
       Use Fixed Frame: true
       Use rainbow: true
