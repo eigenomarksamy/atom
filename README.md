@@ -42,6 +42,26 @@ Moreover, the configurable build configuration can be generated through a UI app
 
 ## Simulation Environment
 
+The simulation environment is a ROS-based simulation environment using gazebo and rviz for visualization, dynamics and physics of the whole system. Moreover, the system embeds some standard vehicles such as AUDIBOT and DBW_MKZ which are included as a submodule and added to the ROS environment, respectively. This environment basically mimics an actual vehicle with a set of sensors and control APIs.
+
+Control APIs:
+
+- Throttle command
+- Brake command
+- Steering command
+- Gear command
+- Turn signal command (DBW_MKZ only)
+
+Sensor set:
+
+- Groundtruth odometry (pose, orientation and twist)
+- IMU -- **TODO**
+- LaserScan -- **TODO**
+- Camera(s) -- **TODO**
+- LiDAR -- **TODO**
+- Sonar (or Ultrasonic) -- **TODO**
+- Radar -- **TODO**
+
 ## Modules Design and Development
 
 ## Integration
