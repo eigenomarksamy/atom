@@ -55,12 +55,28 @@ Control APIs:
 Sensor set:
 
 - Groundtruth odometry (pose, orientation and twist)
-- IMU -- **TODO**
+- IMU -- X, Y and Z (Accelerations, Rotational velosities and Orientations) Including gravity
 - LaserScan -- **TODO**
 - Camera(s) -- **TODO**
 - LiDAR -- **TODO**
-- Sonar (or Ultrasonic) -- **TODO**
+- Sonar/Ultrasonic -- **TODO**
 - Radar -- **TODO**
+
+### ROS-specific info
+
+The section describes the info and APIs implemented using ROS that will allo further communication with the vehicle.
+
+#### Launch
+
+#### Configurations
+
+#### Rviz
+
+#### Topics
+
+#### Messages
+
+#### Services
 
 ## Modules Design and Development
 
