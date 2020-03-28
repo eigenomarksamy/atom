@@ -2,7 +2,7 @@
 <package format="2">
   <name>atom_comm</name>
   <version>0.0.0</version>
-  <description>The atom_comm package</description>
+  <description>The atom_comm package, responsible for communication with ros simulation</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <!-- Example:  -->

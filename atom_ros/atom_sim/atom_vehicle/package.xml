@@ -2,7 +2,7 @@
 <package format="2">
   <name>atom_vehicle</name>
   <version>0.0.0</version>
-  <description>The atom_vehicle package</description>
+  <description>The atom_vehicle package, managing configuration of multiple vehicles in simulation environment</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <!-- Example:  -->

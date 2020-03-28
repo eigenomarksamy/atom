@@ -2,7 +2,7 @@
 <package format="2">
   <name>atom_vehicle_command</name>
   <version>0.0.0</version>
-  <description>The atom_vehicle_command package</description>
+  <description>The atom_vehicle_command package, communication with vehicle(s), giving commands</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <!-- Example:  -->

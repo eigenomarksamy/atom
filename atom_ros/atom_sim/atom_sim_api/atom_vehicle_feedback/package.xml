@@ -2,7 +2,7 @@
 <package format="2">
   <name>atom_vehicle_feedback</name>
   <version>0.0.0</version>
-  <description>The atom_vehicle_feedback package</description>
+  <description>The atom_vehicle_feedback package, communication with vehicle(s), feedback of vehicles' sensors</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <!-- Example:  -->
