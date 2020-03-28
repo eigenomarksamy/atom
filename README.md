@@ -87,7 +87,7 @@ The section describes the info and APIs implemented using ROS that will allo fur
 ### Launching
 
 | **Package**       | **Launch File**   | **Includes**  | **Functionality** |
-|:-------------     |:-----------------:|:-------------:| -----------------:|
+|:-------------     |:----------------- |:------------- | ----------------- |
 | *audibot_gazebo*  | `audibot_named_robot.launch`  | - | Spawns the multiple URDFs (Orange & Blue) of the audibot    |
 | *audibot_gazebo*  | `audibot_named_robot_sens.launch` | - | Spawns the multiple URDFs (Orange & Blue) of the audibot with sensors    |
 | *audibot_gazebo*  | `audibot_robot.launch`  | - | Spawns a single URDF of the audibot   |
