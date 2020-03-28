@@ -84,7 +84,7 @@ The section describes the info and APIs implemented using ROS that will allo fur
 
 ## Manual
 
-## Launch Files
+### Launch Files
 
 | **Package**       | **Launch File**   | **Includes**  | **Description** |
 |:-------------     |:----------------- |:------------- | ----------------- |
