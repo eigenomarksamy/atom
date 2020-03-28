@@ -88,11 +88,11 @@ The section describes the info and APIs implemented using ROS that will allo fur
 
 | **Package**       | **Launch File**   | **Includes**  | **Functionality** |
 |:-------------     |:----------------- |:------------- | ----------------- |
-| *audibot_gazebo*  | `audibot_named_robot.launch`  | - | Spawns the multiple URDFs (Orange & Blue) of the audibot    |
-| *audibot_gazebo*  | `audibot_named_robot_sens.launch` | - | Spawns the multiple URDFs (Orange & Blue) of the audibot with sensors    |
 | *audibot_gazebo*  | `audibot_robot.launch`  | - | Spawns a single URDF of the audibot   |
 | *audibot_gazebo*  | `audibot_robot_sens.launch`  | - | Spawns a single URDF of the audibot with sensors   |
-| *audibot_gazebo*  | `single_vehicle_example.launch`  | - | Launches a single URDF of the audibot along with Gazebo world   |
-| *audibot_gazebo*  | `single_vehicle_example_sens.launch`  | - | Launches a single URDF of the audibot with sensors along with Gazebo world   |
-| *audibot_gazebo*  | `two_vehicle_example.launch`  | - | Launches the multiple URDFs (Orange & Blue) of the audibot along with Gazebo world   |
-| *audibot_gazebo*  | `two_vehicle_example_sens.launch`  | - | Launches the multiple URDFs (Orange & Blue) of the audibot with sensors along with Gazebo world   |
+| *audibot_gazebo*  | `audibot_named_robot.launch`  | - | Spawns the multiple URDFs (Orange & Blue) of the audibot    |
+| *audibot_gazebo*  | `audibot_named_robot_sens.launch` | - | Spawns the multiple URDFs (Orange & Blue) of the audibot with sensors    |
+| *audibot_gazebo*  | `single_vehicle_example.launch`  | `audibot_robot.launch`  | Launches a single URDF of the audibot along with Gazebo world   |
+| *audibot_gazebo*  | `single_vehicle_example_sens.launch`  | `audibot_robot_sens.launch`  | Launches a single URDF of the audibot with sensors along with Gazebo world   |
+| *audibot_gazebo*  | `two_vehicle_example.launch`  | `audibot_named_robot.launch` | Launches the multiple URDFs (Orange & Blue) of the audibot along with Gazebo world   |
+| *audibot_gazebo*  | `two_vehicle_example_sens.launch`  | `audibot_named_robot_sens.launch` | Launches the multiple URDFs (Orange & Blue) of the audibot with sensors along with Gazebo world   |
