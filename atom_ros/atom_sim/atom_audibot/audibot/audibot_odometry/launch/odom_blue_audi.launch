@@ -1,8 +1,0 @@
-<?xml version="1.0"?>
-
-<launch>
-
-  <node pkg="audibot_odometry" name="odom_blue_audi" type="odom_blue_audi.py" output="screen">
-  </node >
-
-</launch>
