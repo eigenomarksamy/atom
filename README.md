@@ -56,7 +56,9 @@ Sensor set:
 
 - Groundtruth odometry (pose, orientation and twist)
 - IMU -- X, Y and Z (Accelerations, Rotational velosities and Orientations) Including gravity
-- LaserScan -- **TODO**
+- LaserScan -- Available
+- GPS -- **TODO**
+- Odometer/Encoder -- **TODO**
 - Camera(s) -- **TODO**
 - LiDAR -- **TODO**
 - Sonar/Ultrasonic -- **TODO**
