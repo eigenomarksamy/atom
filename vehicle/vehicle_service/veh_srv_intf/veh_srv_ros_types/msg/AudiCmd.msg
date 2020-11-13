@@ -3,3 +3,4 @@ veh_srv_ros_types/VehThrottle throttle_msg
 veh_srv_ros_types/VehBrake brake_msg
 veh_srv_ros_types/VehSteering steering_msg
 veh_srv_ros_types/VehGear gear_msg
+tf/tfMessage tf

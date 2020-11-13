@@ -1,0 +1,4 @@
+time timestamp
+sensor_msgs/NavSatFix nav_sat_fix
+sensor_msgs/NavSatStatus nav_sat_status
+tf/tfMessage tf

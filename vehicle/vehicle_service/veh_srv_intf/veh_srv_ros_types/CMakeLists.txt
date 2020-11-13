@@ -10,6 +10,8 @@ project(veh_srv_ros_types)
 find_package(catkin REQUIRED COMPONENTS
   message_generation
   std_msgs
+  nav_msgs
+  tf
 )
 
 ## System dependencies are found with CMake's conventions
@@ -52,7 +54,16 @@ add_message_files(
   VehBrake.msg
   VehSteering.msg
   VehGear.msg
+  VehCamera.msg
+  VehGps.msg
+  VehImu.msg
+  VehLaser.msg
+  VehLidar.msg
+  VehOdom.msg
+  VehOdomGt.msg
+  VehUltrasonic.msg
   AudiCmd.msg
+  AudiReadings.msg
 )
 
 ## Generate services in the 'srv' folder
@@ -73,6 +84,8 @@ add_message_files(
 generate_messages(
   DEPENDENCIES
   std_msgs
+  nav_msgs
+  tf
 )
 
 ################################################
@@ -107,7 +120,7 @@ generate_messages(
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES veh_srv_ros_types
- CATKIN_DEPENDS message_runtime std_msgs
+ CATKIN_DEPENDS message_runtime std_msgs nav_msgs tf
 #  DEPENDS system_lib
 )
 

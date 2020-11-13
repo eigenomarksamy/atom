@@ -1,0 +1,10 @@
+time timestamp
+veh_srv_ros_types/AudiCmd cmd_data
+veh_srv_ros_types/VehOdomGt gt_odom_data
+veh_srv_ros_types/VehOdom odometer_data
+veh_srv_ros_types/VehCamera camera_data
+veh_srv_ros_types/VehImu imu_data
+veh_srv_ros_types/VehGps gps_data
+veh_srv_ros_types/VehLaser laser_data
+veh_srv_ros_types/VehLidar lidar_data
+veh_srv_ros_types/VehUltrasonic ultrasonic_data
