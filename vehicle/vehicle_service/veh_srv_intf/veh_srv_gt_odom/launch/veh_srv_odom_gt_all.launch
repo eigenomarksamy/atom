@@ -1,5 +1,0 @@
-<?xml version="1.0"?>
-<launch>
-    <node pkg="veh_srv_gt_odom" type="gt_odom.py" name="gt_odom" output="screen" cwd="node"/>
-    <node pkg="veh_srv_gt_odom" type="gt_odom_sim.py" name="gt_odom_sim" output="screen" cwd="node"/>
-</launch>

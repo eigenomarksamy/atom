@@ -1,0 +1,13 @@
+time timestamp
+uint64 seq_counter
+std_msgs/String veh_ns
+std_msgs/UInt8 veh_str_len
+std_msgs/String veh_name
+std_msgs/UInt8 veh_id
+std_msgs/String veh_gaz_model_name
+std_msgs/String veh_gaz_frame_id
+std_msgs/String veh_odomgt_node_name
+std_msgs/String veh_odomgt_topic_name
+std_msgs/String veh_odomgt_gaz_srv_name
+std_msgs/String veh_cfg_node_name
+std_msgs/String veh_cfg_topic_name

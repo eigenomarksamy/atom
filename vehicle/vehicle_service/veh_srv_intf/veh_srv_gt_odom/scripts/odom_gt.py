@@ -10,16 +10,13 @@ from nav_msgs.msg import Odometry
 from gazebo_msgs.srv import GetModelState, GetModelStateRequest
 
 class OdomGt:
-    def __init__(self, veh_cfg):
-        self._veh_cfg = veh_cfg
-        self._gaz_frame_id = self._veh_cfg._gaz_frame_id
-        self._gaz_model_name = self._veh_cfg._gaz_model_name
-        self._node_name = self._veh_cfg._node_name
-        self._topic_name = self._veh_cfg._topic_name
-        self._gaz_srv_name = self._veh_cfg._gaz_srv_name
+    def __init__(self, gaz_frame_id, gaz_model_name, topic_name, gaz_srv_name):
+        self._gaz_frame_id = gaz_frame_id
+        self._gaz_model_name = gaz_model_name
+        self._topic_name = topic_name
+        self._gaz_srv_name = gaz_srv_name
 
     def init(self):
-        rospy.init_node(self._node_name)
         self._odom_pub = rospy.Publisher(self._topic_name, VehOdomGt, queue_size=100)
         rospy.wait_for_service(self._gaz_srv_name)
         self._get_model_srv = rospy.ServiceProxy(self._gaz_srv_name, GetModelState)
@@ -37,13 +34,11 @@ class OdomGt:
         self._odom_pub.publish(self._veh_odom_gt)
 
 class OdomGtSim(OdomGt):
-    def __init__(self, veh_cfg):
-        OdomGt.__init__(self, veh_cfg)
-        self._node_name += '_sim'
+    def __init__(self, gaz_frame_id, gaz_model_name, topic_name, gaz_srv_name):
+        OdomGt.__init__(self, gaz_frame_id, gaz_model_name, topic_name, gaz_srv_name)
         self._topic_name += '/sim'
 
     def init(self):
-        rospy.init_node(self._node_name)
         self._odom_pub = rospy.Publisher(self._topic_name, Odometry, queue_size=100)
         rospy.wait_for_service(self._gaz_srv_name)
         self._get_model_srv = rospy.ServiceProxy(self._gaz_srv_name, GetModelState)

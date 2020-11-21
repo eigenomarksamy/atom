@@ -7,9 +7,7 @@ Panels:
         - /Global Options1
         - /Status1
         - /audibot1
-        - /LaserScan1
         - /Odometry1
-        - /Odometry1/Status1
         - /TF1
       Splitter Ratio: 0.5
     Tree Height: 415
@@ -179,7 +177,7 @@ Visualization Manager:
         Shaft Length: 1
         Shaft Radius: 0.0500000007
         Value: Arrow
-      Topic: /audibot0/odom/gt/sim
+      Topic: /audibot/odom/gt/sim
       Unreliable: false
       Value: true
     - Class: rviz/TF
@@ -274,10 +272,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.00999999978
-      Pitch: 0.765398026
+      Pitch: 0.805398047
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 1.13039875
+      Yaw: 1.25039864
     Saved: ~
 Window Geometry:
   Displays:
