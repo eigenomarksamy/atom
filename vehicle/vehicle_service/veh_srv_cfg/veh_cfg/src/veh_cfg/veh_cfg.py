@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 
-class VehSrvCfg:
+class VehSrvComCfg:
     def __init__(self, vehNs, vehStrLen=1, vehName="None", vehId=0):
         self._vehNs                     = vehNs
         self._vehStrLen                 = vehStrLen
@@ -48,6 +48,10 @@ class VehSrvCfg:
         else:
             name = None
         return name
+
+# class VehPhySrvCfg:
+
+# class VehSimSrvCfg:
 
 # class DynVehSrvCfg:
 

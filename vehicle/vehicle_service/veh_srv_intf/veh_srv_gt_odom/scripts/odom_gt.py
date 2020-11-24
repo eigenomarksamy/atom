@@ -36,7 +36,7 @@ class OdomGt:
 class OdomGtSim(OdomGt):
     def __init__(self, gaz_frame_id, gaz_model_name, topic_name, gaz_srv_name):
         OdomGt.__init__(self, gaz_frame_id, gaz_model_name, topic_name, gaz_srv_name)
-        self._topic_name += '/sim'
+        self._topic_name += '_sim'
 
     def init(self):
         self._odom_pub = rospy.Publisher(self._topic_name, Odometry, queue_size=100)

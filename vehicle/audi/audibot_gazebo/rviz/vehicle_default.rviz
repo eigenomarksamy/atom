@@ -177,7 +177,7 @@ Visualization Manager:
         Shaft Length: 1
         Shaft Radius: 0.0500000007
         Value: Arrow
-      Topic: /audibot/odom/gt/sim
+      Topic: /audibot/odom/gt_sim
       Unreliable: false
       Value: true
     - Class: rviz/TF
@@ -264,9 +264,9 @@ Visualization Manager:
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 0.500566185
-        Y: -0.657906353
-        Z: 0.0739312023
+        X: 0.96639961
+        Y: -0.33388859
+        Z: -0.362493008
       Focal Shape Fixed Size: false
       Focal Shape Size: 0.0500000007
       Invert Z Axis: false

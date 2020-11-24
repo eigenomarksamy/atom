@@ -16,4 +16,6 @@
 
   <node pkg="rviz" type="rviz" name="single_vehicle_viz" args="-d $(find audibot_gazebo)/rviz/vehicle_default.rviz" />
 
+  <include file="$(find veh_srv_gt_odom)/launch/veh_srv_odom_gt.launch" />
+
 </launch>

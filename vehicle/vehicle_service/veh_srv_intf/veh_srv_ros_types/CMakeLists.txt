@@ -61,7 +61,7 @@ add_message_files(
   VehLidar.msg
   VehOdom.msg
   VehOdomGt.msg
-  VehCfg.msg
+  VehComCfg.msg
   VehUltrasonic.msg
   AudiCmd.msg
   AudiReadings.msg

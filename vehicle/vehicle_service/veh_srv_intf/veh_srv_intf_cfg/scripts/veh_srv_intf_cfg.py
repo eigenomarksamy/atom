@@ -1,16 +1,16 @@
 #! /usr/bin/env python
 
 import rospy
-from veh_cfg.veh_cfg import VehSrvCfg
-from veh_srv_ros_types.msg import VehCfg
+from veh_cfg.veh_cfg import VehSrvComCfg
+from veh_srv_ros_types.msg import VehComCfg
 
 def init_ros(veh_cfg_obj):
-    rospy.init_node(veh_cfg_obj._cfg_node_name, anonymous=True)
-    pub = rospy.Publisher(veh_cfg_obj._cfg_topic_name, VehCfg, queue_size=10)
+    rospy.init_node(veh_cfg_obj._cfg_node_name)
+    pub = rospy.Publisher(veh_cfg_obj._cfg_topic_name, VehComCfg, queue_size=10)
     return pub
 
 def add_initial_cfg(veh_cfg_obj):
-    pub_msg = VehCfg()
+    pub_msg = VehComCfg()
     pub_msg.timestamp = rospy.Time()
     pub_msg.seq_counter = 1
     pub_msg.veh_ns.data = veh_cfg_obj._pub_vehNs
@@ -27,8 +27,9 @@ def add_initial_cfg(veh_cfg_obj):
     return pub_msg
 
 def main():
-    veh_cfg_obj = VehSrvCfg('audibot')
+    veh_cfg_obj = VehSrvComCfg('audibot')
     pub = init_ros(veh_cfg_obj)
+    print("Veh Com Cfg Publisher Node")
     pub_msg = add_initial_cfg(veh_cfg_obj)
     rate = rospy.Rate(10)
     while not rospy.is_shutdown():

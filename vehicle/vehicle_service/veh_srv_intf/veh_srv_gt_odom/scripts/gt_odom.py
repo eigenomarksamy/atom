@@ -7,7 +7,8 @@
 import sys
 import rospy
 from args_parser.args_parser import ArgsParser
-from veh_srv_ros_types.msg import VehCfg
+from veh_srv_ros_types.msg import VehComCfg
+from veh_cfg.veh_cfg import VehSrvComCfg
 sys.path.append('.')
 from odom_gt import OdomGt, OdomGtSim
 
@@ -19,18 +20,20 @@ def update_data(data):
     return gaz_frame_id, gaz_model_name, topic_name, gaz_srv_name
 
 def main():
-    args_parser = ArgsParser()
-    args = args_parser.vehSrvCfg_parse_args()
-    if args is None:
-        rospy.init_node('audibot_odom_gt', anonymous=True)
-        odom_type = 'real'
+    args_parser_odomgt = ArgsParser()
+    args_dict = args_parser_odomgt.get_veh_launch_params()
+    veh_ns = args_dict['veh_params']['ns']
+    veh_srv_com_cfg = VehSrvComCfg(veh_ns)
+    args = args_parser_odomgt.get_args()
+    if args.sim:
+        rospy.init_node(veh_srv_com_cfg._pub_odomgtNodeName + '_sim')
+        print("ODOM GT Sim Publisher Node")
+        odom_type = 'sim'
     else:
-        odom_type = args[0]
-        if odom_type == 'sim':
-            rospy.init_node('audibot_odom_gt_sim', anonymous=True)
-        elif odom_type == 'real':
-            rospy.init_node('audibot_odom_gt', anonymous=True)
-    data = rospy.wait_for_message('audibot/veh/cfg', VehCfg, timeout=None)
+        rospy.init_node(veh_srv_com_cfg._pub_odomgtNodeName)
+        print("ODOM GT Publisher Node")
+        odom_type = 'real'
+    data = rospy.wait_for_message(veh_srv_com_cfg._pub_cfgTopicName, VehComCfg, timeout=None)
     gaz_frame_id, gaz_model_name, topic_name, gaz_srv_name = update_data(data)
     if odom_type == 'sim':
         odom_gt = OdomGtSim(gaz_frame_id, gaz_model_name, topic_name, gaz_srv_name)
