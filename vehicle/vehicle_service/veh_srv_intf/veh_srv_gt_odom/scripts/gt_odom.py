@@ -10,7 +10,7 @@ from args_parser.args_parser import ArgsParser
 from veh_srv_ros_types.msg import VehComCfg
 from veh_cfg.veh_cfg import VehSrvComCfg
 sys.path.append('.')
-from odom_gt import OdomGt, OdomGtSim
+from odomgt_intf import OdomGt, OdomGtSim
 
 def update_data(data):
     gaz_frame_id = data.veh_gaz_frame_id.data
