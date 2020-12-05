@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<launch>
+    <node pkg="veh_srv_intf_cfg" type="veh_srv_intf_cfg.py" name="veh_srv_intf_cfg" output="screen" cwd="node"/>
+</launch>
