@@ -9,11 +9,6 @@ from cmd_intf import Cmd
 class Steering(Cmd):
     def __init__(self, sub_topic_name, pub_topic_name=None):
         Cmd().__init__(sub_topic_name, pub_topic_name)
-        self.init()
-        self._data = None
-
-    def get_data(self):
-        return self._data
 
     def execute(self):
         self._data = rospy.wait_for_message(topic=self._sub_topic_name, topic_type=VehSteering)
@@ -24,10 +19,11 @@ def main():
     sub_topic_name = None
     pub_topic_name = None
     obj = Steering(sub_topic_name=sub_topic_name, pub_topic_name=pub_topic_name)
-    rate = rospy.Rate(100)
+    obj.init()
+    rate_obj, _ = obj.get_rate_props()
     while not rospy.is_shutdown:
         obj.execute()
-        rate.sleep()
+        rate_obj.sleep()
 
 if __name__ == "__main__":
     main()
