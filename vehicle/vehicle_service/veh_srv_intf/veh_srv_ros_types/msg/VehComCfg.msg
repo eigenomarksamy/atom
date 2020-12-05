@@ -9,5 +9,13 @@ std_msgs/String veh_gaz_frame_id
 std_msgs/String veh_odomgt_node_name
 std_msgs/String veh_odomgt_topic_name
 std_msgs/String veh_odomgt_gaz_srv_name
+std_msgs/String veh_cmd_throt_node_name
+std_msgs/String veh_cmd_throt_topic_name
+std_msgs/String veh_cmd_brake_node_name
+std_msgs/String veh_cmd_brake_topic_name
+std_msgs/String veh_cmd_steer_node_name
+std_msgs/String veh_cmd_steer_topic_name
+std_msgs/String veh_cmd_gear_node_name
+std_msgs/String veh_cmd_gear_topic_name
 std_msgs/String veh_cfg_node_name
 std_msgs/String veh_cfg_topic_name
