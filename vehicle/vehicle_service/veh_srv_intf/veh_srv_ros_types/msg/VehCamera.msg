@@ -1,4 +1,5 @@
 time timestamp
+uint64 seq_counter
 sensor_msgs/CameraInfo camera_info
 sensor_msgs/Image image
 sensor_msgs/CompressedImage compressed_image

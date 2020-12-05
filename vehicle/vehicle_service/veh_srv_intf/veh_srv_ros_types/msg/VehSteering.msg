@@ -1,2 +1,3 @@
 time timestamp
+uint64 seq_counter
 std_msgs/Float64 steering_cmd

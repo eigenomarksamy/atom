@@ -1,4 +1,5 @@
 time timestamp
+uint64 seq_counter
 sensor_msgs/PointCloud pcl_reading
 sensor_msgs/PointCloud2 pcl2_reading
 tf/tfMessage tf

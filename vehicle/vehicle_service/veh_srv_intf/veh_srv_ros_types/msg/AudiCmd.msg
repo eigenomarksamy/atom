@@ -1,4 +1,5 @@
 time timestamp
+uint64 seq_counter
 veh_srv_ros_types/VehThrottle throttle_msg
 veh_srv_ros_types/VehBrake brake_msg
 veh_srv_ros_types/VehSteering steering_msg

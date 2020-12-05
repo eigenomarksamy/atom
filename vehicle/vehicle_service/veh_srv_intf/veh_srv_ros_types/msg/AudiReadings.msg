@@ -1,4 +1,5 @@
 time timestamp
+uint64 seq_counter
 veh_srv_ros_types/AudiCmd cmd_data
 veh_srv_ros_types/VehOdomGt gt_odom_data
 veh_srv_ros_types/VehOdom odometer_data
