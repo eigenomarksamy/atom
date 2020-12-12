@@ -8,7 +8,7 @@ from cmd_intf import Cmd
 
 class Steering(Cmd):
     def __init__(self, sub_topic_name, pub_topic_name=None):
-        Cmd().__init__(sub_topic_name, pub_topic_name)
+        Cmd.__init__(self, sub_topic_name, pub_topic_name)
 
     def execute(self):
         self._data = rospy.wait_for_message(topic=self._sub_topic_name, topic_type=VehSteering)

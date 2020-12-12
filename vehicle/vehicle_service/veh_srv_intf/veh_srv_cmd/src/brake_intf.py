@@ -8,7 +8,7 @@ from cmd_intf import Cmd
 
 class Brake(Cmd):
     def __init__(self, sub_topic_name, pub_topic_name=None):
-        Cmd().__init__(sub_topic_name, pub_topic_name)
+        Cmd.__init__(self, sub_topic_name, pub_topic_name)
         self.init()
 
     def execute(self):
