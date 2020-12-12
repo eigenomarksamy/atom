@@ -18,5 +18,6 @@
 
   <include file="$(find veh_srv_intf_cfg)/launch/veh_srv_intf_cfg.launch" />
   <include file="$(find veh_srv_gt_odom)/launch/veh_srv_odom_gt.launch" />
+  <include file="$(find veh_srv_cmd)/launch/veh_srv_cmd.launch" />
 
 </launch>
