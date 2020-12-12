@@ -6,9 +6,9 @@ import argparse
 class ArgsParser:
     def __init__(self):
         self._parser = argparse.ArgumentParser(description='Simulated vehicle parser.')
-        self._parser.add_argument('--ns', help='Vehicle namespace')
-        self._parser.add_argument('--id', type=int, help='Vehicle ID')
-        self._parser.add_argument('--vehiclename', help='Vehicle name')
+        self._parser.add_argument('--ns', nargs="?", const='audibot', help='Vehicle namespace')
+        self._parser.add_argument('--id', nargs="?", type=int, const=1, help='Vehicle ID')
+        self._parser.add_argument('--vehiclename', nargs="?", const='None', help='Vehicle name')
         self._parser.add_argument('--override_ns', dest='override_ns', action='store_true', help='Flag to override namespace with vehicle name')
         self._parser.add_argument('--sim', dest='sim', action='store_true', help='Simulation-based ODOM GT publishing node')
         self._parser.add_argument('__name', help='Non-usable argument for ROS')

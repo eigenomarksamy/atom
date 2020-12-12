@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+
+<launch>
+
+  <node pkg="veh_srv_cmd" type="throttle_intf.py" name="throttle_intf" args="--ns audibot" output="screen" cwd="node"/>
+  <node pkg="veh_srv_cmd" type="brake_intf.py" name="brake_intf" args="--ns audibot" output="screen" cwd="node"/>
+  <node pkg="veh_srv_cmd" type="steering_intf.py" name="steering_intf" args="--ns audibot" output="screen" cwd="node"/>
+  <node pkg="veh_srv_cmd" type="gear_intf.py" name="gear_intf" args="--ns audibot" output="screen" cwd="node"/>
+
+</launch>
