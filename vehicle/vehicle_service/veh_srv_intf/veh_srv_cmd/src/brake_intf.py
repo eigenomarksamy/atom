@@ -27,7 +27,6 @@ def main():
     rate_obj, _ = obj.get_rate_props()
     while not rospy.is_shutdown():
         obj.execute()
-        rate_obj.sleep()
 
 if __name__ == "__main__":
     main()
