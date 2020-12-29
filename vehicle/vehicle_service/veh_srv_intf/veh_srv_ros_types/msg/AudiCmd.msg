@@ -1,7 +1,6 @@
 time timestamp
 uint64 seq_counter
-veh_srv_ros_types/VehThrottle throttle_msg
-veh_srv_ros_types/VehBrake brake_msg
-veh_srv_ros_types/VehSteering steering_msg
-veh_srv_ros_types/VehGear gear_msg
-tf/tfMessage tf
+uint64 throttle_cmd
+uint64 brake_cmd
+int64 steering_cmd
+uint8 gear_cmd
