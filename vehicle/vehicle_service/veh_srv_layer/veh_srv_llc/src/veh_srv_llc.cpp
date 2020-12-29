@@ -8,26 +8,50 @@
 #include "std_msgs/String.h"
 
 /* defined msg and srv types inclusion */
-
+#include "veh_srv_ros_types/AudiCmd.h"
 
 /* pkg-level header inclusion */
-#include "srv_llc_type.h"
+#include "veh_srv_llc.h"
 
 /* language-based inclusion */
 #include <stdio.h>
 #include <iostream>
 
-void callback(const std_msgs::String::ConstPtr& msg)
+/* local function prototypes */
+void audiCmdCallback(const veh_srv_ros_types::AudiCmd::ConstPtr&);
+static void fillComCfg(const struct ros_com_S*);
+static void initRos(ros::Subscriber&, struct ros_com_cfg_S, int, char **);
+
+void audiCmdCallback(const veh_srv_ros_types::AudiCmd::ConstPtr& msg)
 {
-    ROS_INFO("I heard: [%s]", msg->data.c_str());
+    
+}
+
+static void fillComCfg(struct ros_com_cfg_S* ros_com_cfg)
+{
+    ros_com_cfg->nodeName = "audibot_veh_llc_node";
+    ros_com_cfg->topicInName = "/audibot/vehicle_srv/llc";
+    ros_com_cfg->topicOutNames[VEH_THROTTLE] = "/audibot/vehicle_srv/veh_throttle";
+    ros_com_cfg->topicOutNames[VEH_BRAKE] = "/audibot/vehicle_srv/veh_brake";
+    ros_com_cfg->topicOutNames[VEH_STEERING] = "/audibot/vehicle_srv/veh_steering";
+    ros_com_cfg->topicOutNames[VEH_GEAR] = "/audibot/vehicle_srv/veh_gear";
+    ros_com_cfg->maxBuffLen = 1000;
+}
+
+static void initRos(ros::Subscriber& sub, struct ros_com_cfg_S ros_com_cfg, int argc, char **argv)
+{
+    ros::init(argc, argv, ros_com_cfg.nodeName);
+    ros::NodeHandle node_handle;
+    node_handle.subscribe(ros_com_cfg.topicInName, ros_com_cfg.maxBuffLen, audiCmdCallback);
 }
 
 int32_t main(int argc, char **argv)
 {
+    struct ros_com_cfg_S ros_com_cfg;
+    fillComCfg(&ros_com_cfg);
     /* initialize ros node */
-    ros::init(argc, argv, "node_name");
-    ros::NodeHandle n;
-    ros::Subscriber sub = n.subscribe("topic_name", 1000, callback);
+    ros::Subscriber node_sub;
+    initRos(node_sub, ros_com_cfg, argc, argv);
     ros::spin();
     return 0;
 }
