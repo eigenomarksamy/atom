@@ -17,10 +17,13 @@
 #include <string>
 
 /* typedefs */
+typedef bool    bool_t;
 typedef int8_t  sint8_t;
 typedef int16_t sint16_t;
 typedef int32_t sint32_t;
 typedef int64_t sint64_t;
+typedef double  float64_t;
+typedef float   float32_t;
 
 /* definition of enums, structs, defines, etc. */
 #define SINT8_MIN           INT8_MIN
@@ -31,6 +34,9 @@ typedef int64_t sint64_t;
 #define SINT32_MAX          INT32_MAX
 #define SINT64_MIN          INT64_MIN
 #define SINT64_MAX          INT64_MAX
+
+#define TRUE                true
+#define FALSE               false
 
 #define MAX_STR_LEN         100u
 #define MAX_NODE_NAME_LEN   MAX_STR_LEN
@@ -46,7 +52,7 @@ enum Gear_CMD_E {
 };
 
 enum cmd_sys_E {
-    VEH_NONE = 0,
+    VEH_CMD_NONE = 0,
     VEH_THROTTLE,
     VEH_BRAKE,
     VEH_STEERING,
@@ -63,20 +69,20 @@ struct ros_com_cfg_S {
 };
 
 struct cmd_in_data_S {
-    double      time;           /* ros::Time::now().toSec() */
+    float64_t   time;                   /* ros::Time::now().toSec() */
     uint64_t    seq_counter;
-    sint64_t    steer_in_cmd;   /* from SINT64_MIN to SINT64_MAX */
-    uint64_t    throt_in_cmd;   /* from UINT64_MIN to UINT64_MAX */
-    uint64_t    brake_in_cmd;   /* from UINT64_MIN to UINT64_MAX */
+    sint64_t    steer_in_cmd;           /* from SINT64_MIN to SINT64_MAX */
+    uint64_t    throt_in_cmd;           /* from UINT64_MIN to UINT64_MAX */
+    uint64_t    brake_in_cmd;           /* from UINT64_MIN to UINT64_MAX */
     Gear_CMD_E  gear_in_cmd;
 };
 
 struct cmd_out_data_S {
-    double      time;           /* ros::Time::now().toSec() */
     uint64_t    seq_counter;
-    float       steer_out_cmd;   /* from SINT64_MIN to SINT64_MAX */
-    float       throt_out_cmd;   /* from UINT64_MIN to UINT64_MAX */
-    float       brake_out_cmd;   /* from UINT64_MIN to UINT64_MAX */
+    float64_t   time;               /* ros::Time::now().toSec() */
+    float32_t   steer_out_cmd;
+    float32_t   throt_out_cmd;
+    float32_t   brake_out_cmd;
     uint8_t     gear_out_cmd;
 };
 
