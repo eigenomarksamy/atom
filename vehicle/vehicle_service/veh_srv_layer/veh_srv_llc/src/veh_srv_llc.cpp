@@ -101,6 +101,7 @@ static void fillComCfg(struct ros_com_cfg_S* p_rosComCfg)
 }
 
 /*! \details initializes the ros communication
+ * \param[out] node_pub_all - ros node publisher
  * \param[out] node_pub_throt - ros node publisher
  * \param[out] node_pub_brake - ros node publisher
  * \param[out] node_pub_steer - ros node publisher
@@ -132,7 +133,8 @@ static void initRos(ros::Publisher& node_pub_all, ros::Publisher& node_pub_throt
 }
 
 /*! \details validates the input msg according to the previous msg.
- * \param[in] msg - the msg of the type on the topic
+ * \param[in] p_cmdInDataPre - the previous input msg
+ * \param[in] p_cmdInData - the current input msg
  */
 static bool_t validateInput(const struct cmd_in_data_S* const p_cmdInDataPre, 
                             const struct cmd_in_data_S* const p_cmdInData)
@@ -146,7 +148,7 @@ static bool_t validateInput(const struct cmd_in_data_S* const p_cmdInDataPre,
 }
 
 /*! \details the output structure which is published on the corresponding topics.
- * \param[out] p_cmdOutData - the publishing message
+ * \param[out] p_cmdOutData - pointer to the output cmd
  * \param[in] p_cmdInData - the input to the node (subscription)
  */
 static void fillCmdOut(struct cmd_out_data_S* p_cmdOutData,
@@ -185,9 +187,9 @@ static void fillCmdOut(struct cmd_out_data_S* p_cmdOutData,
 }
 
 /*! \details the output structure which is published on the corresponding topics.
- * \param[in] publisher - the publishing message
- * \param[in] p_cmdOut - the input to the node (subscription)
- * \param[in] subsystem - the input to the node (subscription)
+ * \param[in] publisher - the publisher object
+ * \param[in] p_cmdOut - pointer to the output cmd struct
+ * \param[in] subsystem - the subsystem to be published
  */
 static void publishCmd(ros::Publisher& publisher, const struct cmd_out_data_S* p_cmdOut, enum cmd_sys_E subsystem)
 {
