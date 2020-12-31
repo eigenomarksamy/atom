@@ -17,9 +17,13 @@
 /********************************************/
 
 /* defines */
-#define STEER_RATIO     (17.3f)
-#define MAX_STEER       M_PI * 2
-#define MIN_STEER       M_PI * -2
+#define AUDI_STEER_RATIO    (17.3f)
+#define AUDI_MAX_STEER      M_PI * 2
+#define AUDI_MIN_STEER      -AUDI_MAX_STEER
+#define MAX_STEER           AUDI_MAX_STEER
+#define MIN_STEER           AUDI_MIN_STEER
+#define STEER_RATIO         AUDI_STEER_RATIO
+
 #define INVALID_MAX     200u
 #define VEH_CMD_ALL     VEH_CMD_NONE
 
