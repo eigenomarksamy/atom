@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<launch>
+  <node pkg="veh_srv_llc" type="veh_srv_llc" name="veh_srv_llc" output="screen"/>
+</launch>
