@@ -51,6 +51,15 @@ static void fillCmdOut(struct cmd_out_data_S*, const struct cmd_in_data_S* const
 static void publishCmd(ros::Publisher&, const struct cmd_out_data_S*, enum cmd_sys_E);
 /*! \brief publishes data */
 static void assignPrevMsg(struct cmd_in_data_S*);
+/*! \brief node's initialization function */
+void init(struct ros_com_cfg_S*,
+          struct ros_types_conf_S*,
+          struct veh_phy_cfg_S*,
+          struct cmd_in_data_S*,
+          struct cmd_out_data_S*,
+          int, char **);
+/*! \brief node's main function */
+int32_t main(int, char**);
 
 
 /* implementation of local functions */
@@ -237,8 +246,7 @@ static void assignPrevMsg(struct cmd_in_data_S* p_preCmd)
 }
 
 
-/*! \brief node's initialization function
- * \details initializes the node
+/*! \details initializes the node
  * \param[out] p_rosComCfg - ros communication configurations
  * \param[out] p_rosTypesConf - ros types configurations
  * \param[out] p_vehPhyCfg - vehicle's physical configurations
@@ -268,8 +276,7 @@ void init(struct ros_com_cfg_S* p_rosComCfg, struct ros_types_conf_S* p_rosTypes
 /*              Main Function               */
 /********************************************/
 
-/*! \brief node's main function
- * \details executes the node
+/*! \details executes the node
  * \param[in] argc - arguments from launch
  * \param[in] argv - arguments from launch
  */
