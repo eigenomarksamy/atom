@@ -17,19 +17,16 @@
 /********************************************/
 
 /* defines */
-#define PI              M_PI
 #define STEER_RATIO     (17.3f)
-#define MAX_STEER       2*PI
-#define MIN_STEER       -2*PI
+#define MAX_STEER       M_PI * 2
+#define MIN_STEER       M_PI * -2
 #define INVALID_MAX     200u
 #define VEH_CMD_ALL     VEH_CMD_NONE
 
 
 /* global variables */
 static struct cmd_in_data_S gst_cmd_in_data;
-static struct cmd_in_data_S gst_cmd_in_pre_data;
-static bool_t st_is_first_cycle = TRUE;
-static uint8_t st_invalid_count = 0;
+static bool_t gst_is_first_cycle = TRUE;
 
 
 
@@ -41,15 +38,19 @@ static uint8_t st_invalid_count = 0;
 /*! \brief callback function */
 void audiCmdCallback(const veh_srv_ros_types::AudiCmd::ConstPtr&);
 /*! \brief static function that fills the initialization */
-static void fillComCfg(struct ros_com_S*);
+static void initComCfg(struct ros_com_S*);
 /*! \brief initializes the ros communication */
 static void initRos(struct ros_types_conf_S*, const struct ros_com_cfg_S* const, int, char **);
+/*! \brief vehicle configurations */
+static void initVehPhyCfg(struct veh_phy_cfg_S *);
 /*! \brief validation function */
 static bool_t validateInput(const struct cmd_in_data_S* const, const struct cmd_in_data_S* const);
 /*! \brief fills the output structure */
-static void fillCmdOut(struct cmd_out_data_S*, const struct cmd_in_data_S* const);
+static void fillCmdOut(struct cmd_out_data_S*, const struct cmd_in_data_S* const, const struct veh_phy_cfg_S* const);
 /*! \brief publishes data */
 static void publishCmd(ros::Publisher&, const struct cmd_out_data_S*, enum cmd_sys_E);
+/*! \brief publishes data */
+static void assignPrevMsg(struct cmd_in_data_S*);
 
 
 /* implementation of local functions */
@@ -61,13 +62,9 @@ static void publishCmd(ros::Publisher&, const struct cmd_out_data_S*, enum cmd_s
  */
 void audiCmdCallback(const veh_srv_ros_types::AudiCmd::ConstPtr& msg)
 {
-    if (st_is_first_cycle)
+    if (gst_is_first_cycle)
     {
-        st_is_first_cycle = FALSE;
-    }
-    else
-    {
-        gst_cmd_in_pre_data = gst_cmd_in_data;
+        gst_is_first_cycle = FALSE;
     }
     gst_cmd_in_data.time = msg->timestamp.toSec();
     gst_cmd_in_data.seq_counter = msg->seq_counter;
@@ -81,7 +78,7 @@ void audiCmdCallback(const veh_srv_ros_types::AudiCmd::ConstPtr& msg)
 /*! \details initializes the communication configurations
  * \param[out] p_rosComCfg - the configurations to be filled
  */
-static void fillComCfg(struct ros_com_cfg_S* p_rosComCfg)
+static void initComCfg(struct ros_com_cfg_S* p_rosComCfg)
 {
     p_rosComCfg->nodeName = "audibot_veh_llc_node";
     p_rosComCfg->topicInName = "/audibot/vehicle_srv/llc";
@@ -115,12 +112,19 @@ static void initRos(struct ros_types_conf_S* p_rosTypeCfg, const struct ros_com_
 }
 
 
-/*! \details validates the input msg according to the previous msg.
- * \param[in] p_cmdInDataPre - the previous input msg
- * \param[in] p_cmdInData - the current input msg
+/*! \details initializes the ros communication
+ * \param[out] p_vehPhyCfg - ros node handler, publisher & subscriber
  */
-static bool_t validateInput(const struct cmd_in_data_S* const p_cmdInDataPre, 
-                            const struct cmd_in_data_S* const p_cmdInData)
+static void initVehPhyCfg(struct veh_phy_cfg_S * p_vehPhyCfg)
+{
+    p_vehPhyCfg->maxSteer = MAX_STEER;
+    p_vehPhyCfg->minSteer = MIN_STEER;
+    p_vehPhyCfg->steerRatio = STEER_RATIO;
+}
+
+
+static bool_t validateInput(const struct cmd_in_data_S* const p_cmdInData, 
+                            const struct cmd_in_data_S* const p_cmdInDataPre)
 {
     bool_t validInput = FALSE;
     if (p_cmdInData->seq_counter >= p_cmdInDataPre->seq_counter)
@@ -134,9 +138,10 @@ static bool_t validateInput(const struct cmd_in_data_S* const p_cmdInDataPre,
 /*! \details the output structure which is published on the corresponding topics.
  * \param[out] p_cmdOutData - pointer to the output cmd
  * \param[in] p_cmdInData - the input to the node (subscription)
+ * \param[in] p_vehCfg - vehicle's physical configurations
  */
 static void fillCmdOut(struct cmd_out_data_S* p_cmdOutData,
-                        const struct cmd_in_data_S* const p_cmdInData)
+                        const struct cmd_in_data_S* const p_cmdInData, const struct veh_phy_cfg_S* const p_vehCfg)
 {
     p_cmdOutData->time = ros::Time::now().toSec();
     bool_t is_movable = (p_cmdInData->gear_in_cmd == GEAR_R || p_cmdInData->gear_in_cmd == GEAR_D) ? TRUE : FALSE;
@@ -145,13 +150,15 @@ static void fillCmdOut(struct cmd_out_data_S* p_cmdOutData,
         /* convert from uint64_t to float64 (cmd * MAX_CMD<1> / UINT64_MAX) */
         p_cmdOutData->throt_out_cmd = static_cast<float>(p_cmdInData->throt_in_cmd / UINT64_MAX);
         p_cmdOutData->brake_out_cmd = static_cast<float>(p_cmdInData->brake_in_cmd / UINT64_MAX);
-        if (p_cmdInData->steer_in_cmd > 0)
+        if (0 < p_cmdInData->steer_in_cmd)
         {
-            p_cmdOutData->steer_out_cmd = static_cast<float>((p_cmdInData->steer_in_cmd * MAX_STEER) / SINT16_MAX);
+            p_cmdOutData->steer_out_cmd = \
+                                        static_cast<float>((p_cmdInData->steer_in_cmd * p_vehCfg->maxSteer) / SINT16_MAX);
         }
-        else if (p_cmdInData->steer_in_cmd < 0)
+        else if (0 > p_cmdInData->steer_in_cmd)
         {
-            p_cmdOutData->steer_out_cmd = static_cast<float>((p_cmdInData->steer_in_cmd * MIN_STEER) / SINT16_MIN);
+            p_cmdOutData->steer_out_cmd = \
+                                        static_cast<float>((p_cmdInData->steer_in_cmd * p_vehCfg->minSteer) / SINT16_MIN);
         }
         else /* steering_cmd == 0 */
         {
@@ -220,6 +227,15 @@ static void publishCmd(ros::Publisher& publisher, const struct cmd_out_data_S* p
 }
 
 
+/*! \details assigns the previous received msg for error checking.
+ * \param[out] p_preCmd - pointer to the previous msg
+ */
+static void assignPrevMsg(struct cmd_in_data_S* p_preCmd)
+{
+    *p_preCmd = gst_cmd_in_data;
+}
+
+
 
 /********************************************/
 /*              Main Function               */
@@ -234,35 +250,44 @@ int32_t main(int argc, char **argv)
 {
     struct ros_types_conf_S ros_types_cfg;
     struct ros_com_cfg_S ros_com_cfg;
+    struct cmd_in_data_S in_prev_data;
     struct cmd_out_data_S out_data;
+    struct veh_phy_cfg_S veh_cfg;
+    bool_t invalid_count = 0;
     /* fill the node configuration structure */
-    fillComCfg(&ros_com_cfg);
+    initComCfg(&ros_com_cfg);
     /* initialize the rate of publishing of node */
     ros::Rate node_rate(ros_com_cfg.rosRate);
     /* initialization of previous cycle data */
     out_data.seq_counter = 0;
-    (void)memset(&gst_cmd_in_pre_data, 0, sizeof(gst_cmd_in_pre_data));
+    (void)memset(&in_prev_data, 0, sizeof(in_prev_data));
     /* initialize ros node */
     initRos(&ros_types_cfg, &ros_com_cfg, argc, argv);
+    /* initialize vehicle physical configrations */
+    initVehPhyCfg(&veh_cfg);
     /* 
      * equivalent to while(1) as long as ros communication is up
      * and we are receiving valid messages
     */
-    while ((ros::ok()) && (INVALID_MAX > st_invalid_count))
+    while ((ros::ok()) && (INVALID_MAX > invalid_count))
     {
-        if (validateInput(&gst_cmd_in_pre_data, &gst_cmd_in_data))
+        if(!gst_is_first_cycle)
         {
-            /* fill output of cmd */
-            fillCmdOut(&out_data, &gst_cmd_in_data);
-            /* publish all subsystems */
-            for (uint8_t it = VEH_CMD_ALL; it < VEH_CMD_LEN; it++)
+            if (validateInput(&gst_cmd_in_data, &in_prev_data))
             {
-                publishCmd(ros_types_cfg.nodePublishers[it], &out_data, static_cast<cmd_sys_E>(it));
+                /* fill output of cmd */
+                fillCmdOut(&out_data, &gst_cmd_in_data, &veh_cfg);
+                /* publish all subsystems */
+                for (uint8_t it = 0; it < VEH_CMD_LEN; it++)
+                {
+                    publishCmd(ros_types_cfg.nodePublishers[it], &out_data, static_cast<cmd_sys_E>(it));
+                }
             }
-        }
-        else
-        {
-            st_invalid_count++;
+            else
+            {
+                invalid_count++;
+            }
+            assignPrevMsg(&in_prev_data);
         }
         ros::spinOnce();
         if(ros_com_cfg.selfRate)

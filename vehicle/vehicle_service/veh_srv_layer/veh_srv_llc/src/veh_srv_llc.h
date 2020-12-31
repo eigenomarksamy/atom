@@ -107,4 +107,10 @@ struct cmd_out_data_S {
     uint8_t     gear_out_cmd;
 };
 
+struct veh_phy_cfg_S {
+    float32_t maxSteer;
+    float32_t minSteer;
+    float32_t steerRatio;
+};
+
 #endif /* VEH_SRV_LLC_H_ */
