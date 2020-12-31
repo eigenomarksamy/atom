@@ -76,7 +76,6 @@ struct ros_com_cfg_S {
 };
 
 struct ros_types_conf_S {
-    ros::NodeHandle nodeHandler;
     ros::Subscriber nodeSubscriber;
     ros::Publisher  nodePublishers[VEH_CMD_LEN];
     ros::Rate*      p_nodRate;

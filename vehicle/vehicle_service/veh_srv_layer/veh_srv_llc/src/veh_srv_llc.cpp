@@ -112,12 +112,13 @@ static void initRos(struct ros_types_conf_S* p_rosTypeCfg, const struct ros_com_
                     int argc, char **argv)
 {
     ros::init(argc, argv, p_rosComCfg->nodeName);
-    p_rosTypeCfg->nodePublishers[VEH_CMD_ALL] = p_rosTypeCfg->nodeHandler.advertise<veh_srv_ros_types::AudiCmd>(p_rosComCfg->topicOutNames[VEH_CMD_ALL], p_rosComCfg->maxBuffLen);
-    p_rosTypeCfg->nodePublishers[VEH_THROTTLE] = p_rosTypeCfg->nodeHandler.advertise<veh_srv_ros_types::VehThrottle>(p_rosComCfg->topicOutNames[VEH_THROTTLE], p_rosComCfg->maxBuffLen);
-    p_rosTypeCfg->nodePublishers[VEH_BRAKE] = p_rosTypeCfg->nodeHandler.advertise<veh_srv_ros_types::VehBrake>(p_rosComCfg->topicOutNames[VEH_BRAKE], p_rosComCfg->maxBuffLen);
-    p_rosTypeCfg->nodePublishers[VEH_STEERING] = p_rosTypeCfg->nodeHandler.advertise<veh_srv_ros_types::VehSteering>(p_rosComCfg->topicOutNames[VEH_STEERING], p_rosComCfg->maxBuffLen);
-    p_rosTypeCfg->nodePublishers[VEH_GEAR] = p_rosTypeCfg->nodeHandler.advertise<veh_srv_ros_types::VehGear>(p_rosComCfg->topicOutNames[VEH_GEAR], p_rosComCfg->maxBuffLen);
-    p_rosTypeCfg->nodeSubscriber = p_rosTypeCfg->nodeHandler.subscribe(p_rosComCfg->topicInName, p_rosComCfg->maxBuffLen, audiCmdCallback);
+    ros::NodeHandle node_handler;
+    p_rosTypeCfg->nodePublishers[VEH_CMD_ALL] = node_handler.advertise<veh_srv_ros_types::AudiCmd>(p_rosComCfg->topicOutNames[VEH_CMD_ALL], p_rosComCfg->maxBuffLen);
+    p_rosTypeCfg->nodePublishers[VEH_THROTTLE] = node_handler.advertise<veh_srv_ros_types::VehThrottle>(p_rosComCfg->topicOutNames[VEH_THROTTLE], p_rosComCfg->maxBuffLen);
+    p_rosTypeCfg->nodePublishers[VEH_BRAKE] = node_handler.advertise<veh_srv_ros_types::VehBrake>(p_rosComCfg->topicOutNames[VEH_BRAKE], p_rosComCfg->maxBuffLen);
+    p_rosTypeCfg->nodePublishers[VEH_STEERING] = node_handler.advertise<veh_srv_ros_types::VehSteering>(p_rosComCfg->topicOutNames[VEH_STEERING], p_rosComCfg->maxBuffLen);
+    p_rosTypeCfg->nodePublishers[VEH_GEAR] = node_handler.advertise<veh_srv_ros_types::VehGear>(p_rosComCfg->topicOutNames[VEH_GEAR], p_rosComCfg->maxBuffLen);
+    p_rosTypeCfg->nodeSubscriber = node_handler.subscribe(p_rosComCfg->topicInName, p_rosComCfg->maxBuffLen, audiCmdCallback);
     p_rosTypeCfg->p_nodRate = new ros::Rate(p_rosComCfg->rosRate);
 }
 
