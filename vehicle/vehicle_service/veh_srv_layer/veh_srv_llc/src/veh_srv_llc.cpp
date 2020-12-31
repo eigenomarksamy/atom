@@ -38,7 +38,11 @@ static bool_t gst_is_first_cycle = TRUE;
 /*! \brief callback function */
 void audiCmdCallback(const veh_srv_ros_types::AudiCmd::ConstPtr&);
 /*! \brief static function that fills the initialization */
-static void initComCfg(struct ros_com_S*);
+static void initComCfg(struct ros_com_cfg_S*,
+                       std::string veh_ns="audibot",
+                       uint8_t veh_str_len=1,
+                       uint8_t veh_id=0,
+                       std::string veh_name="audibot");
 /*! \brief initializes the ros communication */
 static void initRos(struct ros_types_conf_S*, const struct ros_com_cfg_S* const, int, char **);
 /*! \brief vehicle configurations */
@@ -87,15 +91,59 @@ void audiCmdCallback(const veh_srv_ros_types::AudiCmd::ConstPtr& msg)
 /*! \details initializes the communication configurations
  * \param[out] p_rosComCfg - the configurations to be filled
  */
-static void initComCfg(struct ros_com_cfg_S* p_rosComCfg)
+static void initComCfg(struct ros_com_cfg_S* p_rosComCfg,
+                       std::string veh_ns,
+                       uint8_t veh_str_len,
+                       uint8_t veh_id,
+                       std::string veh_name)
 {
-    p_rosComCfg->nodeName = "audibot_veh_llc_node";
-    p_rosComCfg->topicInName = "/audibot/vehicle_srv/llc";
-    p_rosComCfg->topicOutNames[VEH_CMD_ALL] = "/audibot/veh_srv/veh_cmd_feedback";
-    p_rosComCfg->topicOutNames[VEH_THROTTLE] = "/audibot/vehicle_srv/veh_throttle";
-    p_rosComCfg->topicOutNames[VEH_BRAKE] = "/audibot/vehicle_srv/veh_brake";
-    p_rosComCfg->topicOutNames[VEH_STEERING] = "/audibot/vehicle_srv/veh_steering";
-    p_rosComCfg->topicOutNames[VEH_GEAR] = "/audibot/vehicle_srv/veh_gear";
+    std::string veh_id_str = std::to_string(veh_id);
+    if ((1 == veh_str_len) && (veh_ns == veh_name))
+    {
+        p_rosComCfg->nodeName = veh_ns + "_veh_llc_node";
+        p_rosComCfg->topicInName = "/" + veh_ns + "/vehicle_srv/llc";
+        p_rosComCfg->topicOutNames[VEH_CMD_ALL] = "/" + veh_ns + "/veh_srv/veh_cmd_feedback";
+        p_rosComCfg->topicOutNames[VEH_THROTTLE] = "/" + veh_ns + "/vehicle_srv/veh_throttle";
+        p_rosComCfg->topicOutNames[VEH_BRAKE] = "/" + veh_ns + "/vehicle_srv/veh_brake";
+        p_rosComCfg->topicOutNames[VEH_STEERING] = "/" + veh_ns + "/vehicle_srv/veh_steering";
+        p_rosComCfg->topicOutNames[VEH_GEAR] = "/" + veh_ns + "/vehicle_srv/veh_gear";
+    }
+    else if ((1 != veh_str_len) && (veh_ns == veh_name))
+    {
+        p_rosComCfg->nodeName = veh_ns + "/" + veh_id_str + "_veh_llc_node";
+        p_rosComCfg->topicInName = "/" + veh_ns + "/" + veh_id_str + "/vehicle_srv/llc";
+        p_rosComCfg->topicOutNames[VEH_CMD_ALL] = "/" + veh_ns + "/" + veh_id_str + "/veh_srv/veh_cmd_feedback";
+        p_rosComCfg->topicOutNames[VEH_THROTTLE] = "/" + veh_ns + "/" + veh_id_str + "/vehicle_srv/veh_throttle";
+        p_rosComCfg->topicOutNames[VEH_BRAKE] = "/" + veh_ns + "/" + veh_id_str + "/vehicle_srv/veh_brake";
+        p_rosComCfg->topicOutNames[VEH_STEERING] = "/" + veh_ns + "/" + veh_id_str + "/vehicle_srv/veh_steering";
+        p_rosComCfg->topicOutNames[VEH_GEAR] = "/" + veh_ns + "/" + veh_id_str + "/vehicle_srv/veh_gear";
+    }
+    else if ((1 == veh_str_len) && (veh_ns != veh_name))
+    {
+        p_rosComCfg->nodeName = veh_ns + "/" + veh_name + "_veh_llc_node";
+        p_rosComCfg->topicInName = "/" + veh_ns + "/" + veh_name + "/vehicle_srv/llc";
+        p_rosComCfg->topicOutNames[VEH_CMD_ALL] = "/" + veh_ns + "/" + veh_name + "/veh_srv/veh_cmd_feedback";
+        p_rosComCfg->topicOutNames[VEH_THROTTLE] = "/" + veh_ns + "/" + veh_name + "/vehicle_srv/veh_throttle";
+        p_rosComCfg->topicOutNames[VEH_BRAKE] = "/" + veh_ns + "/" + veh_name + "/vehicle_srv/veh_brake";
+        p_rosComCfg->topicOutNames[VEH_STEERING] = "/" + veh_ns + "/" + veh_name + "/vehicle_srv/veh_steering";
+        p_rosComCfg->topicOutNames[VEH_GEAR] = "/" + veh_ns + "/" + veh_name + "/vehicle_srv/veh_gear";
+    }
+    else /* if ((1 != veh_str_len) && (veh_ns != veh_name)) */
+    {
+        p_rosComCfg->nodeName = veh_ns + "/" + veh_name + "/" + veh_id_str + "_veh_llc_node";
+        p_rosComCfg->topicInName = "/" + veh_ns + "/" + veh_name + "/" + veh_id_str + "/vehicle_srv/llc";
+        p_rosComCfg->topicOutNames[VEH_CMD_ALL] = \
+        "/" + veh_ns + "/" + veh_name + "/" + veh_id_str + "/veh_srv/veh_cmd_feedback";
+        p_rosComCfg->topicOutNames[VEH_THROTTLE] = \
+        "/" + veh_ns + "/" + veh_name + "/" + veh_id_str + "/vehicle_srv/veh_throttle";
+        p_rosComCfg->topicOutNames[VEH_BRAKE] = \
+        "/" + veh_ns + "/" + veh_name + "/" + veh_id_str + "/vehicle_srv/veh_brake";
+        p_rosComCfg->topicOutNames[VEH_STEERING] = \
+        "/" + veh_ns + "/" + veh_name + "/" + veh_id_str + "/vehicle_srv/veh_steering";
+        p_rosComCfg->topicOutNames[VEH_GEAR] = \
+        "/" + veh_ns + "/" + veh_name + "/" + veh_id_str + "/vehicle_srv/veh_gear";
+    }
+    
     p_rosComCfg->maxBuffLen = 1000;
     p_rosComCfg->rosRate = 100;
     p_rosComCfg->selfRate = TRUE;
