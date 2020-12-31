@@ -8,38 +8,15 @@
 /*                  Includes                */
 /********************************************/
 
-/* ros standard libraries inclusion */
-
-#include "ros/ros.h"
-#include "std_msgs/String.h"
-
-
-/* defined msg and srv types inclusion */
-
-#include "veh_srv_ros_types/AudiCmd.h"
-#include "veh_srv_ros_types/VehThrottle.h"
-#include "veh_srv_ros_types/VehBrake.h"
-#include "veh_srv_ros_types/VehSteering.h"
-#include "veh_srv_ros_types/VehGear.h"
-
-
 /* pkg-level header inclusion */
-
 #include "veh_srv_llc.h"
 
 
-/* language-based inclusion */
-
-#include <iostream>
-
-
-
 /********************************************/
-/*          Defines and globals             */
+/*  Defines, Structs, Enums, Globals, ETC.  */
 /********************************************/
 
 /* defines */
-
 #define PI              M_PI
 #define STEER_RATIO     (17.3f)
 #define MAX_STEER       2*PI
@@ -49,7 +26,6 @@
 
 
 /* global variables */
-
 static struct cmd_in_data_S gst_cmd_in_data;
 static struct cmd_in_data_S gst_cmd_in_pre_data;
 static bool_t st_is_first_cycle = TRUE;
@@ -60,7 +36,6 @@ static uint8_t st_invalid_count = 0;
 /********************************************/
 /*          Local Functions                 */
 /********************************************/
-
 /* local functions prototypes */
 
 /*! \brief callback function */
@@ -68,9 +43,7 @@ void audiCmdCallback(const veh_srv_ros_types::AudiCmd::ConstPtr&);
 /*! \brief static function that fills the initialization */
 static void fillComCfg(struct ros_com_S*);
 /*! \brief initializes the ros communication */
-static void initRos(ros::Publisher&, ros::Publisher&, ros::Publisher&, ros::Publisher&,
-                    ros::Publisher&, ros::Subscriber&, ros::NodeHandle&, struct ros_com_cfg_S,
-                    int, char **);
+static void initRos(struct ros_types_conf_S*, const struct ros_com_cfg_S* const, int, char **);
 /*! \brief validation function */
 static bool_t validateInput(const struct cmd_in_data_S* const, const struct cmd_in_data_S* const);
 /*! \brief fills the output structure */
@@ -124,35 +97,21 @@ static void fillComCfg(struct ros_com_cfg_S* p_rosComCfg)
 
 
 /*! \details initializes the ros communication
- * \param[out] node_pub_all - ros node publisher
- * \param[out] node_pub_throt - ros node publisher
- * \param[out] node_pub_brake - ros node publisher
- * \param[out] node_pub_steer - ros node publisher
- * \param[out] node_pub_gear - ros node publisher
- * \param[out] node_sub - ros node subscriber
- * \param[in, out] node_handler - ros node handler object
- * \param[in] ros_com_cfg - configurations of ros communication
+ * \param[in, out] p_rosTypeCfg - ros node handler, publisher & subscriber
+ * \param[in] p_rosComCfg - configurations of ros communication
  * \param[in] argc - arguments added in launch
  * \param[in] argv - arguments added in launch
  */
-static void initRos(ros::Publisher& node_pub_all, ros::Publisher& node_pub_throt,
-                    ros::Publisher& node_pub_brake, ros::Publisher& node_pub_steer,
-                    ros::Publisher& node_pub_gear, ros::Subscriber& node_sub,
-                    ros::NodeHandle& node_handler, struct ros_com_cfg_S ros_com_cfg,
+static void initRos(struct ros_types_conf_S* p_rosTypeCfg, const struct ros_com_cfg_S* const p_rosComCfg,
                     int argc, char **argv)
 {
-    ros::init(argc, argv, ros_com_cfg.nodeName);
-    node_pub_all = node_handler.advertise<veh_srv_ros_types::AudiCmd>(ros_com_cfg.topicOutNames[VEH_CMD_ALL],
-                                                                        ros_com_cfg.maxBuffLen);
-    node_pub_throt = node_handler.advertise<veh_srv_ros_types::VehThrottle>(ros_com_cfg.topicOutNames[VEH_THROTTLE],
-                                                                            ros_com_cfg.maxBuffLen);
-    node_pub_brake = node_handler.advertise<veh_srv_ros_types::VehBrake>(ros_com_cfg.topicOutNames[VEH_BRAKE],
-                                                                        ros_com_cfg.maxBuffLen);
-    node_pub_steer = node_handler.advertise<veh_srv_ros_types::VehSteering>(ros_com_cfg.topicOutNames[VEH_STEERING],
-                                                                            ros_com_cfg.maxBuffLen);
-    node_pub_gear = node_handler.advertise<veh_srv_ros_types::VehGear>(ros_com_cfg.topicOutNames[VEH_GEAR],
-                                                                        ros_com_cfg.maxBuffLen);
-    node_sub = node_handler.subscribe(ros_com_cfg.topicInName, ros_com_cfg.maxBuffLen, audiCmdCallback);
+    ros::init(argc, argv, p_rosComCfg->nodeName);
+    p_rosTypeCfg->nodePublishers[VEH_CMD_ALL] = p_rosTypeCfg->nodeHandler.advertise<veh_srv_ros_types::AudiCmd>(p_rosComCfg->topicOutNames[VEH_CMD_ALL], p_rosComCfg->maxBuffLen);
+    p_rosTypeCfg->nodePublishers[VEH_THROTTLE] = p_rosTypeCfg->nodeHandler.advertise<veh_srv_ros_types::VehThrottle>(p_rosComCfg->topicOutNames[VEH_THROTTLE], p_rosComCfg->maxBuffLen);
+    p_rosTypeCfg->nodePublishers[VEH_BRAKE] = p_rosTypeCfg->nodeHandler.advertise<veh_srv_ros_types::VehBrake>(p_rosComCfg->topicOutNames[VEH_BRAKE], p_rosComCfg->maxBuffLen);
+    p_rosTypeCfg->nodePublishers[VEH_STEERING] = p_rosTypeCfg->nodeHandler.advertise<veh_srv_ros_types::VehSteering>(p_rosComCfg->topicOutNames[VEH_STEERING], p_rosComCfg->maxBuffLen);
+    p_rosTypeCfg->nodePublishers[VEH_GEAR] = p_rosTypeCfg->nodeHandler.advertise<veh_srv_ros_types::VehGear>(p_rosComCfg->topicOutNames[VEH_GEAR], p_rosComCfg->maxBuffLen);
+    p_rosTypeCfg->nodeSubscriber = p_rosTypeCfg->nodeHandler.subscribe(p_rosComCfg->topicInName, p_rosComCfg->maxBuffLen, audiCmdCallback);
 }
 
 
@@ -219,45 +178,41 @@ static void fillCmdOut(struct cmd_out_data_S* p_cmdOutData,
  */
 static void publishCmd(ros::Publisher& publisher, const struct cmd_out_data_S* p_cmdOut, enum cmd_sys_E subsystem)
 {
-    veh_srv_ros_types::AudiCmd msg_all;
-    veh_srv_ros_types::VehThrottle msg_throt;
-    veh_srv_ros_types::VehBrake msg_brake;
-    veh_srv_ros_types::VehSteering msg_steer;
-    veh_srv_ros_types::VehGear msg_gear;
+    struct ros_msg_types_S msg;
     switch (subsystem)
     {
     case VEH_CMD_ALL:
-        msg_all.throttle_cmd = gst_cmd_in_data.throt_in_cmd;
-        msg_all.brake_cmd = gst_cmd_in_data.brake_in_cmd;
-        msg_all.steering_cmd = gst_cmd_in_data.steer_in_cmd;
-        msg_all.gear_cmd = gst_cmd_in_data.gear_in_cmd;
-        msg_all.seq_counter = p_cmdOut->seq_counter;
-        msg_all.timestamp = ros::Time::now();
-        publisher.publish(msg_all);
+        msg.msgAll.throttle_cmd = gst_cmd_in_data.throt_in_cmd;
+        msg.msgAll.brake_cmd = gst_cmd_in_data.brake_in_cmd;
+        msg.msgAll.steering_cmd = gst_cmd_in_data.steer_in_cmd;
+        msg.msgAll.gear_cmd = gst_cmd_in_data.gear_in_cmd;
+        msg.msgAll.seq_counter = p_cmdOut->seq_counter;
+        msg.msgAll.timestamp = ros::Time::now();
+        publisher.publish(msg.msgAll);
         break;
     case VEH_THROTTLE:
-        msg_throt.throttle_cmd.data = p_cmdOut->throt_out_cmd;
-        msg_throt.seq_counter = p_cmdOut->seq_counter;
-        msg_throt.timestamp = ros::Time::now();
-        publisher.publish(msg_throt);
+        msg.msgThrot.throttle_cmd.data = p_cmdOut->throt_out_cmd;
+        msg.msgThrot.seq_counter = p_cmdOut->seq_counter;
+        msg.msgThrot.timestamp = ros::Time::now();
+        publisher.publish(msg.msgThrot);
         break;
     case VEH_BRAKE:
-        msg_brake.brake_cmd.data = p_cmdOut->brake_out_cmd;
-        msg_brake.seq_counter = p_cmdOut->seq_counter;
-        msg_brake.timestamp = ros::Time::now();
-        publisher.publish(msg_brake);
+        msg.msgBrake.brake_cmd.data = p_cmdOut->brake_out_cmd;
+        msg.msgBrake.seq_counter = p_cmdOut->seq_counter;
+        msg.msgBrake.timestamp = ros::Time::now();
+        publisher.publish(msg.msgBrake);
         break;
     case VEH_STEERING:
-        msg_steer.steering_cmd.data = p_cmdOut->steer_out_cmd;
-        msg_steer.seq_counter = p_cmdOut->seq_counter;
-        msg_steer.timestamp = ros::Time::now();
-        publisher.publish(msg_steer);
+        msg.msgSteer.steering_cmd.data = p_cmdOut->steer_out_cmd;
+        msg.msgSteer.seq_counter = p_cmdOut->seq_counter;
+        msg.msgSteer.timestamp = ros::Time::now();
+        publisher.publish(msg.msgSteer);
         break;
     case VEH_GEAR:
-        msg_gear.gear_cmd.data = p_cmdOut->gear_out_cmd;
-        msg_gear.seq_counter = p_cmdOut->seq_counter;
-        msg_gear.timestamp = ros::Time::now();
-        publisher.publish(msg_gear);
+        msg.msgGear.gear_cmd.data = p_cmdOut->gear_out_cmd;
+        msg.msgGear.seq_counter = p_cmdOut->seq_counter;
+        msg.msgGear.timestamp = ros::Time::now();
+        publisher.publish(msg.msgGear);
         break;
     default:
         break;
@@ -277,11 +232,9 @@ static void publishCmd(ros::Publisher& publisher, const struct cmd_out_data_S* p
  */
 int32_t main(int argc, char **argv)
 {
+    struct ros_types_conf_S ros_types_cfg;
     struct ros_com_cfg_S ros_com_cfg;
     struct cmd_out_data_S out_data;
-    ros::NodeHandle node_handler;
-    ros::Subscriber node_sub;
-    ros::Publisher node_pub[VEH_CMD_LEN];
     /* fill the node configuration structure */
     fillComCfg(&ros_com_cfg);
     /* initialize the rate of publishing of node */
@@ -290,9 +243,7 @@ int32_t main(int argc, char **argv)
     out_data.seq_counter = 0;
     (void)memset(&gst_cmd_in_pre_data, 0, sizeof(gst_cmd_in_pre_data));
     /* initialize ros node */
-    initRos(node_pub[VEH_CMD_ALL], node_pub[VEH_THROTTLE], node_pub[VEH_BRAKE],
-            node_pub[VEH_STEERING], node_pub[VEH_GEAR], node_sub, node_handler,
-            ros_com_cfg, argc, argv);
+    initRos(&ros_types_cfg, &ros_com_cfg, argc, argv);
     /* 
      * equivalent to while(1) as long as ros communication is up
      * and we are receiving valid messages
@@ -306,7 +257,7 @@ int32_t main(int argc, char **argv)
             /* publish all subsystems */
             for (uint8_t it = VEH_CMD_ALL; it < VEH_CMD_LEN; it++)
             {
-                publishCmd(node_pub[it], &out_data, static_cast<cmd_sys_E>(it));
+                publishCmd(ros_types_cfg.nodePublishers[it], &out_data, static_cast<cmd_sys_E>(it));
             }
         }
         else

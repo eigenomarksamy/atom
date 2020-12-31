@@ -8,13 +8,16 @@
 #define VEH_SRV_LLC_H_
 
 /* ros standard libraries inclusion */
-
+#include "ros/ros.h"
 /* defined msg and srv types inclusion */
-
-/* pkg-level header inclusion */
-
+#include "veh_srv_ros_types/AudiCmd.h"
+#include "veh_srv_ros_types/VehThrottle.h"
+#include "veh_srv_ros_types/VehBrake.h"
+#include "veh_srv_ros_types/VehSteering.h"
+#include "veh_srv_ros_types/VehGear.h"
 /* language-based inclusion */
 #include <string>
+
 
 /* typedefs */
 typedef bool    bool_t;
@@ -24,6 +27,7 @@ typedef int32_t sint32_t;
 typedef int64_t sint64_t;
 typedef double  float64_t;
 typedef float   float32_t;
+
 
 /* definition of enums, structs, defines, etc. */
 #define SINT8_MIN           INT8_MIN
@@ -41,6 +45,7 @@ typedef float   float32_t;
 #define MAX_STR_LEN         100u
 #define MAX_NODE_NAME_LEN   MAX_STR_LEN
 #define MAX_TOPIC_NAME_LEN  MAX_STR_LEN
+
 
 enum Gear_CMD_E {
     GEAR_NONE = 0,
@@ -60,6 +65,7 @@ enum cmd_sys_E {
     VEH_CMD_LEN
 };
 
+
 struct ros_com_cfg_S {
     std::string nodeName;
     std::string topicInName;
@@ -67,6 +73,20 @@ struct ros_com_cfg_S {
     uint16_t    maxBuffLen;
     uint8_t     rosRate;
     bool_t      selfRate;
+};
+
+struct ros_types_conf_S {
+    ros::NodeHandle nodeHandler;
+    ros::Subscriber nodeSubscriber;
+    ros::Publisher  nodePublishers[VEH_CMD_LEN];
+};
+
+struct ros_msg_types_S {
+    veh_srv_ros_types::AudiCmd      msgAll;
+    veh_srv_ros_types::VehThrottle  msgThrot;
+    veh_srv_ros_types::VehBrake     msgBrake;
+    veh_srv_ros_types::VehSteering  msgSteer;
+    veh_srv_ros_types::VehGear      msgGear;
 };
 
 struct cmd_in_data_S {
