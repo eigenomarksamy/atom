@@ -28,11 +28,12 @@
 /*          Defines and globals             */
 /********************************************/
 /* defines */
-#define PI          M_PI
-#define STEER_RATIO (17.3f)
-#define MAX_STEER   2*PI
-#define MIN_STEER   -2*PI
-#define INVALID_MAX 200u
+#define PI              M_PI
+#define STEER_RATIO     (17.3f)
+#define MAX_STEER       2*PI
+#define MIN_STEER       -2*PI
+#define INVALID_MAX     200u
+#define VEH_CMD_ALL     VEH_CMD_NONE
 
 /* global variables */
 static struct cmd_in_data_S gst_cmd_in_data;
@@ -91,13 +92,14 @@ static void fillComCfg(struct ros_com_cfg_S* p_rosComCfg)
 {
     p_rosComCfg->nodeName = "audibot_veh_llc_node";
     p_rosComCfg->topicInName = "/audibot/vehicle_srv/llc";
-    p_rosComCfg->topicOutNames[VEH_CMD_NONE] = "/audibot/veh_srv/veh_cmd_feedback";
+    p_rosComCfg->topicOutNames[VEH_CMD_ALL] = "/audibot/veh_srv/veh_cmd_feedback";
     p_rosComCfg->topicOutNames[VEH_THROTTLE] = "/audibot/vehicle_srv/veh_throttle";
     p_rosComCfg->topicOutNames[VEH_BRAKE] = "/audibot/vehicle_srv/veh_brake";
     p_rosComCfg->topicOutNames[VEH_STEERING] = "/audibot/vehicle_srv/veh_steering";
     p_rosComCfg->topicOutNames[VEH_GEAR] = "/audibot/vehicle_srv/veh_gear";
     p_rosComCfg->maxBuffLen = 1000;
     p_rosComCfg->rosRate = 100;
+    p_rosComCfg->selfRate = TRUE;
 }
 
 /*! \details initializes the ros communication
@@ -119,7 +121,7 @@ static void initRos(ros::Publisher& node_pub_all, ros::Publisher& node_pub_throt
                     int argc, char **argv)
 {
     ros::init(argc, argv, ros_com_cfg.nodeName);
-    node_pub_all = node_handler.advertise<veh_srv_ros_types::AudiCmd>(ros_com_cfg.topicOutNames[VEH_CMD_NONE],
+    node_pub_all = node_handler.advertise<veh_srv_ros_types::AudiCmd>(ros_com_cfg.topicOutNames[VEH_CMD_ALL],
                                                                         ros_com_cfg.maxBuffLen);
     node_pub_throt = node_handler.advertise<veh_srv_ros_types::VehThrottle>(ros_com_cfg.topicOutNames[VEH_THROTTLE],
                                                                             ros_com_cfg.maxBuffLen);
@@ -200,7 +202,7 @@ static void publishCmd(ros::Publisher& publisher, const struct cmd_out_data_S* p
     veh_srv_ros_types::VehGear msg_gear;
     switch (subsystem)
     {
-    case VEH_CMD_NONE:
+    case VEH_CMD_ALL:
         msg_all.throttle_cmd = gst_cmd_in_data.throt_in_cmd;
         msg_all.brake_cmd = gst_cmd_in_data.brake_in_cmd;
         msg_all.steering_cmd = gst_cmd_in_data.steer_in_cmd;
@@ -253,20 +255,29 @@ int32_t main(int argc, char **argv)
     ros::NodeHandle node_handler;
     ros::Subscriber node_sub;
     ros::Publisher node_pub[VEH_CMD_LEN];
-    ros::Rate node_rate(ros_com_cfg.rosRate);
-    out_data.seq_counter = 0;
+    /* fill the node configuration structure */
     fillComCfg(&ros_com_cfg);
+    /* initialize the rate of publishing of node */
+    ros::Rate node_rate(ros_com_cfg.rosRate);
+    /* initialization of previous cycle data */
+    out_data.seq_counter = 0;
     (void)memset(&gst_cmd_in_pre_data, 0, sizeof(gst_cmd_in_pre_data));
     /* initialize ros node */
-    initRos(node_pub[VEH_CMD_NONE], node_pub[VEH_THROTTLE], node_pub[VEH_BRAKE],
+    initRos(node_pub[VEH_CMD_ALL], node_pub[VEH_THROTTLE], node_pub[VEH_BRAKE],
             node_pub[VEH_STEERING], node_pub[VEH_GEAR], node_sub, node_handler,
             ros_com_cfg, argc, argv);
+    /* 
+     * equivalent to while(1) as long as ros communication is up
+     * and we are receiving valid messages
+    */
     while ((ros::ok()) && (INVALID_MAX > st_invalid_count))
     {
         if (validateInput(&gst_cmd_in_pre_data, &gst_cmd_in_data))
         {
+            /* fill output of cmd */
             fillCmdOut(&out_data, &gst_cmd_in_data);
-            for (uint8_t it = VEH_CMD_NONE; it < VEH_CMD_LEN; it++)
+            /* publish all subsystems */
+            for (uint8_t it = VEH_CMD_ALL; it < VEH_CMD_LEN; it++)
             {
                 publishCmd(node_pub[it], &out_data, static_cast<cmd_sys_E>(it));
             }
@@ -276,7 +287,10 @@ int32_t main(int argc, char **argv)
             st_invalid_count++;
         }
         ros::spinOnce();
-        node_rate.sleep();
+        if(ros_com_cfg.selfRate)
+        {
+            node_rate.sleep();
+        }
     }
     return 0;
 }

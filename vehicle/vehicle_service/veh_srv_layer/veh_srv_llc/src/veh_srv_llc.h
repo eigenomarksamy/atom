@@ -64,8 +64,9 @@ struct ros_com_cfg_S {
     std::string nodeName;
     std::string topicInName;
     std::string topicOutNames[VEH_CMD_LEN];
-    uint16_t maxBuffLen;
-    uint8_t rosRate;
+    uint16_t    maxBuffLen;
+    uint8_t     rosRate;
+    bool_t      selfRate;
 };
 
 struct cmd_in_data_S {
