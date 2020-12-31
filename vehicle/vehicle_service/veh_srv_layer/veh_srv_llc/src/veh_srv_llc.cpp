@@ -3,31 +3,43 @@
  * Date:    27-12-2020
  */
 
+
 /********************************************/
 /*                  Includes                */
 /********************************************/
+
 /* ros standard libraries inclusion */
+
 #include "ros/ros.h"
 #include "std_msgs/String.h"
 
+
 /* defined msg and srv types inclusion */
+
 #include "veh_srv_ros_types/AudiCmd.h"
 #include "veh_srv_ros_types/VehThrottle.h"
 #include "veh_srv_ros_types/VehBrake.h"
 #include "veh_srv_ros_types/VehSteering.h"
 #include "veh_srv_ros_types/VehGear.h"
 
+
 /* pkg-level header inclusion */
+
 #include "veh_srv_llc.h"
 
+
 /* language-based inclusion */
+
 #include <iostream>
+
 
 
 /********************************************/
 /*          Defines and globals             */
 /********************************************/
+
 /* defines */
+
 #define PI              M_PI
 #define STEER_RATIO     (17.3f)
 #define MAX_STEER       2*PI
@@ -35,17 +47,22 @@
 #define INVALID_MAX     200u
 #define VEH_CMD_ALL     VEH_CMD_NONE
 
+
 /* global variables */
+
 static struct cmd_in_data_S gst_cmd_in_data;
 static struct cmd_in_data_S gst_cmd_in_pre_data;
 static bool_t st_is_first_cycle = TRUE;
 static uint8_t st_invalid_count = 0;
 
 
+
 /********************************************/
 /*          Local Functions                 */
 /********************************************/
+
 /* local functions prototypes */
+
 /*! \brief callback function */
 void audiCmdCallback(const veh_srv_ros_types::AudiCmd::ConstPtr&);
 /*! \brief static function that fills the initialization */
@@ -61,7 +78,9 @@ static void fillCmdOut(struct cmd_out_data_S*, const struct cmd_in_data_S* const
 /*! \brief publishes data */
 static void publishCmd(ros::Publisher&, const struct cmd_out_data_S*, enum cmd_sys_E);
 
+
 /* implementation of local functions */
+
 /*! \details triggered when the ros detects a new message 
  * on the topic "/audibot/vehicle_srv/llc".
  * it fills a global static structure.
@@ -85,6 +104,7 @@ void audiCmdCallback(const veh_srv_ros_types::AudiCmd::ConstPtr& msg)
     gst_cmd_in_data.gear_in_cmd = static_cast<Gear_CMD_E>(msg->gear_cmd);
 }
 
+
 /*! \details initializes the communication configurations
  * \param[out] p_rosComCfg - the configurations to be filled
  */
@@ -101,6 +121,7 @@ static void fillComCfg(struct ros_com_cfg_S* p_rosComCfg)
     p_rosComCfg->rosRate = 100;
     p_rosComCfg->selfRate = TRUE;
 }
+
 
 /*! \details initializes the ros communication
  * \param[out] node_pub_all - ros node publisher
@@ -134,6 +155,7 @@ static void initRos(ros::Publisher& node_pub_all, ros::Publisher& node_pub_throt
     node_sub = node_handler.subscribe(ros_com_cfg.topicInName, ros_com_cfg.maxBuffLen, audiCmdCallback);
 }
 
+
 /*! \details validates the input msg according to the previous msg.
  * \param[in] p_cmdInDataPre - the previous input msg
  * \param[in] p_cmdInData - the current input msg
@@ -148,6 +170,7 @@ static bool_t validateInput(const struct cmd_in_data_S* const p_cmdInDataPre,
     }
     return validInput;
 }
+
 
 /*! \details the output structure which is published on the corresponding topics.
  * \param[out] p_cmdOutData - pointer to the output cmd
@@ -187,6 +210,7 @@ static void fillCmdOut(struct cmd_out_data_S* p_cmdOutData,
     }
     p_cmdOutData->seq_counter++;
 }
+
 
 /*! \details the output structure which is published on the corresponding topics.
  * \param[in] publisher - the publisher object
@@ -240,9 +264,12 @@ static void publishCmd(ros::Publisher& publisher, const struct cmd_out_data_S* p
     }
 }
 
+
+
 /********************************************/
 /*              Main Function               */
 /********************************************/
+
 /*! \brief node's main function
  * \details executes the node
  * \param[in] argc - arguments from launch
