@@ -147,7 +147,6 @@ static void initComCfg(struct ros_com_cfg_S* p_rosComCfg,
         p_rosComCfg->topicOutNames[VEH_GEAR] = \
         "/" + veh_ns + "/" + veh_name + "/" + veh_id_str + "/vehicle_srv/veh_gear";
     }
-    
     p_rosComCfg->maxBuffLen = 1000;
     p_rosComCfg->rosRate = 100;
     p_rosComCfg->selfRate = TRUE;
