@@ -109,11 +109,12 @@ static void initRos(struct ros_types_conf_S* p_rosTypeCfg, const struct ros_com_
     p_rosTypeCfg->nodePublishers[VEH_STEERING] = p_rosTypeCfg->nodeHandler.advertise<veh_srv_ros_types::VehSteering>(p_rosComCfg->topicOutNames[VEH_STEERING], p_rosComCfg->maxBuffLen);
     p_rosTypeCfg->nodePublishers[VEH_GEAR] = p_rosTypeCfg->nodeHandler.advertise<veh_srv_ros_types::VehGear>(p_rosComCfg->topicOutNames[VEH_GEAR], p_rosComCfg->maxBuffLen);
     p_rosTypeCfg->nodeSubscriber = p_rosTypeCfg->nodeHandler.subscribe(p_rosComCfg->topicInName, p_rosComCfg->maxBuffLen, audiCmdCallback);
+    p_rosTypeCfg->p_nodRate = new ros::Rate(p_rosComCfg->rosRate);
 }
 
 
-/*! \details initializes the ros communication
- * \param[out] p_vehPhyCfg - ros node handler, publisher & subscriber
+/*! \details initializes the vehicle cfg
+ * \param[out] p_vehPhyCfg - vehicle's physical configurations
  */
 static void initVehPhyCfg(struct veh_phy_cfg_S * p_vehPhyCfg)
 {
@@ -236,6 +237,32 @@ static void assignPrevMsg(struct cmd_in_data_S* p_preCmd)
 }
 
 
+/*! \brief node's initialization function
+ * \details initializes the node
+ * \param[out] p_rosComCfg - ros communication configurations
+ * \param[out] p_rosTypesConf - ros types configurations
+ * \param[out] p_vehPhyCfg - vehicle's physical configurations
+ * \param[out] p_prevData - msg in previous data
+ * \param[out] p_outData - output data after processing
+ * \param[in] argc - arguments from launch
+ * \param[in] argv - arguments from launch
+ */
+void init(struct ros_com_cfg_S* p_rosComCfg, struct ros_types_conf_S* p_rosTypesConf,
+            struct veh_phy_cfg_S* p_vehPhyCfg, struct cmd_in_data_S* p_prevData,
+            struct cmd_out_data_S* p_outData, int argc, char **argv)
+{
+    /* fill the node configuration structure */
+    initComCfg(p_rosComCfg);
+    /* initialize ros node */
+    initRos(p_rosTypesConf, p_rosComCfg, argc, argv);
+    /* initialize vehicle physical configrations */
+    initVehPhyCfg(p_vehPhyCfg);
+    /* initialization of output data */
+    (void)memset(p_outData, 0, sizeof(cmd_out_data_S));
+    /* initialization of previous cycle data */
+    (void)memset(p_prevData, 0, sizeof(cmd_in_data_S));
+}
+
 
 /********************************************/
 /*              Main Function               */
@@ -248,51 +275,42 @@ static void assignPrevMsg(struct cmd_in_data_S* p_preCmd)
  */
 int32_t main(int argc, char **argv)
 {
-    struct ros_types_conf_S ros_types_cfg;
-    struct ros_com_cfg_S ros_com_cfg;
-    struct cmd_in_data_S in_prev_data;
-    struct cmd_out_data_S out_data;
-    struct veh_phy_cfg_S veh_cfg;
-    bool_t invalid_count = 0;
-    /* fill the node configuration structure */
-    initComCfg(&ros_com_cfg);
-    /* initialize the rate of publishing of node */
-    ros::Rate node_rate(ros_com_cfg.rosRate);
-    /* initialization of previous cycle data */
-    out_data.seq_counter = 0;
-    (void)memset(&in_prev_data, 0, sizeof(in_prev_data));
-    /* initialize ros node */
-    initRos(&ros_types_cfg, &ros_com_cfg, argc, argv);
-    /* initialize vehicle physical configrations */
-    initVehPhyCfg(&veh_cfg);
+    struct ros_com_cfg_S rosComCfg;
+    struct ros_types_conf_S rosTypesCfg;
+    struct veh_phy_cfg_S vehPhyCfg;
+    struct cmd_in_data_S inPrevData;
+    struct cmd_out_data_S outData;
+    bool_t cntr_inValid = 0;
+    /* initialization of the whole node */
+    init(&rosComCfg, &rosTypesCfg, &vehPhyCfg, &inPrevData, &outData, argc, argv);
     /* 
      * equivalent to while(1) as long as ros communication is up
      * and we are receiving valid messages
     */
-    while ((ros::ok()) && (INVALID_MAX > invalid_count))
+    while ((ros::ok()) && (INVALID_MAX > cntr_inValid))
     {
         if(!gst_is_first_cycle)
         {
-            if (validateInput(&gst_cmd_in_data, &in_prev_data))
+            if (validateInput(&gst_cmd_in_data, &inPrevData))
             {
                 /* fill output of cmd */
-                fillCmdOut(&out_data, &gst_cmd_in_data, &veh_cfg);
+                fillCmdOut(&outData, &gst_cmd_in_data, &vehPhyCfg);
                 /* publish all subsystems */
                 for (uint8_t it = 0; it < VEH_CMD_LEN; it++)
                 {
-                    publishCmd(ros_types_cfg.nodePublishers[it], &out_data, static_cast<cmd_sys_E>(it));
+                    publishCmd(rosTypesCfg.nodePublishers[it], &outData, static_cast<cmd_sys_E>(it));
                 }
             }
             else
             {
-                invalid_count++;
+                cntr_inValid++;
             }
-            assignPrevMsg(&in_prev_data);
+            assignPrevMsg(&inPrevData);
         }
         ros::spinOnce();
-        if(ros_com_cfg.selfRate)
+        if(rosComCfg.selfRate)
         {
-            node_rate.sleep();
+            rosTypesCfg.p_nodRate->sleep();
         }
     }
     return 0;
