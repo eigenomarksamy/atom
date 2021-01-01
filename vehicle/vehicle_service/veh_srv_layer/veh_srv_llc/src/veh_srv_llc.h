@@ -42,46 +42,51 @@ typedef float   float32_t;
 #define TRUE                true
 #define FALSE               false
 
-#define MAX_STR_LEN         100u
+#define MAX_STR_LEN         UINT8_MAX
 #define MAX_NODE_NAME_LEN   MAX_STR_LEN
 #define MAX_TOPIC_NAME_LEN  MAX_STR_LEN
 
 
-enum Gear_CMD_E {
-    GEAR_NONE = 0,
-    GEAR_P,
-    GEAR_R,
-    GEAR_N,
-    GEAR_D,
-    GEAR_CMD_LEN
+/*! \brief defines the system actuators */
+enum CMD_Sys_E {
+    CMD_SYS_NONE = 0,
+    CMD_SYS_THROT,
+    CMD_SYS_BRAKE,
+    CMD_SYS_STEER,
+    CMD_SYS_GEAR,
+    CMD_SYS_LEN
 };
 
-enum cmd_sys_E {
-    VEH_CMD_NONE = 0,
-    VEH_THROTTLE,
-    VEH_BRAKE,
-    VEH_STEERING,
-    VEH_GEAR,
-    VEH_CMD_LEN
+/*! \brief defines the gear commands */
+enum CMD_Gear_E {
+    CMD_GEAR_NONE = 0,
+    CMD_GEAR_P,
+    CMD_GEAR_R,
+    CMD_GEAR_N,
+    CMD_GEAR_D,
+    CMD_GEAR_LEN
 };
 
 
-struct ros_com_cfg_S {
+/*! \brief defines the communication-related parameters */
+struct cfg_RosComm_S {
     std::string nodeName;
     std::string topicInName;
-    std::string topicOutNames[VEH_CMD_LEN];
+    std::string topicOutNames[CMD_SYS_LEN];
     uint16_t    maxBuffLen;
     uint8_t     rosRate;
     bool_t      selfRate;
 };
 
-struct ros_types_conf_S {
+/*! \brief defines the node-related ros parameters */
+struct cfg_RosNode_S {
     ros::Subscriber nodeSubscriber;
-    ros::Publisher  nodePublishers[VEH_CMD_LEN];
+    ros::Publisher  nodePublishers[CMD_SYS_LEN];
     ros::Rate*      p_nodRate;
 };
 
-struct ros_msg_types_S {
+/*! \brief defines the msg types used */
+struct cfg_RosMsgs_S {
     veh_srv_ros_types::AudiCmd      msgAll;
     veh_srv_ros_types::VehThrottle  msgThrot;
     veh_srv_ros_types::VehBrake     msgBrake;
@@ -89,16 +94,28 @@ struct ros_msg_types_S {
     veh_srv_ros_types::VehGear      msgGear;
 };
 
-struct cmd_in_data_S {
+/*! \brief defines the vehicle's physical configuration */
+struct cfg_VehPhy_S {
+    float32_t maxSteer;
+    float32_t minSteer;
+    float32_t steerRatio;   /* = 17.3:1 */
+    float32_t wheelBase;    /* = 2.65 meters */
+    float32_t trackWidth;   /* = 1.638 meters */
+    float32_t wheelRadius;  /* = 0.36 meters */
+};
+
+/*! \brief defines the receiving msg parameters */
+struct cmd_InData_S {
     float64_t   time;                   /* ros::Time::now().toSec() */
     uint64_t    seq_counter;
     sint64_t    steer_in_cmd;           /* from SINT64_MIN to SINT64_MAX */
     uint64_t    throt_in_cmd;           /* from UINT64_MIN to UINT64_MAX */
     uint64_t    brake_in_cmd;           /* from UINT64_MIN to UINT64_MAX */
-    Gear_CMD_E  gear_in_cmd;
+    CMD_Gear_E  gear_in_cmd;
 };
 
-struct cmd_out_data_S {
+/*! \brief defines the output msgs parameters */
+struct cmd_OutData_S {
     uint64_t    seq_counter;
     float64_t   time;               /* ros::Time::now().toSec() */
     float32_t   steer_out_cmd;
@@ -107,10 +124,5 @@ struct cmd_out_data_S {
     uint8_t     gear_out_cmd;
 };
 
-struct veh_phy_cfg_S {
-    float32_t maxSteer;
-    float32_t minSteer;
-    float32_t steerRatio;
-};
 
 #endif /* VEH_SRV_LLC_H_ */
